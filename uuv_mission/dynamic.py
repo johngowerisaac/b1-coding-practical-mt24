@@ -62,7 +62,7 @@ class Trajectory:
                          color='saddlebrown', alpha=0.3)
         plt.plot(self.position[:, 0], self.position[:, 1], label='Trajectory')
         plt.plot(mission.reference, 'r', linestyle='--', label='Reference')
-        plt.legendf(loc='upper right')
+        plt.legend(loc='upper right')
         plt.show()
 
 @dataclass
@@ -79,8 +79,8 @@ class Mission:
     @classmethod
     def from_csv(cls):
         # You are required to implement this method
-        mission_data = 'data/mission.csv'
-        print("Current Working Directory:", os.getcwd())
+        mission_data = '../data/mission.csv'
+        
         data = pd.read_csv(mission_data)
 
         reference = data['reference'].to_numpy()
@@ -108,7 +108,15 @@ class ClosedLoop:
         for t in range(T):
             positions[t] = self.plant.get_position()
             observation_t = self.plant.get_depth()
+        
             # Call your controller here
+            # Get the reference depth from the mission
+            reference_depth = mission.reference[t]
+
+            # Calculate control action using the PD controller
+            actions[t] = self.controller.compute_control(reference_depth, observation_t)
+
+            # Update submarine state with the calculated control action and disturbance
             self.plant.transition(actions[t], disturbances[t])
 
         return Trajectory(positions)
@@ -117,3 +125,5 @@ class ClosedLoop:
         disturbances = np.random.normal(0, variance, len(mission.reference))
         return self.simulate(mission, disturbances)
 
+# mission_data = Mission.from_csv()
+# print(mission_data)
