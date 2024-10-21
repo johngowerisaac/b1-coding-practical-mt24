@@ -2,8 +2,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 import numpy as np
 import matplotlib.pyplot as plt
-from .terrain import generate_reference_and_limits
+from terrain import generate_reference_and_limits
 import pandas as pd
+import os
 
 
 class Submarine:
@@ -61,7 +62,7 @@ class Trajectory:
                          color='saddlebrown', alpha=0.3)
         plt.plot(self.position[:, 0], self.position[:, 1], label='Trajectory')
         plt.plot(mission.reference, 'r', linestyle='--', label='Reference')
-        plt.legend(loc='upper right')
+        plt.legendf(loc='upper right')
         plt.show()
 
 @dataclass
@@ -78,9 +79,9 @@ class Mission:
     @classmethod
     def from_csv(cls):
         # You are required to implement this method
-        mission_file = 'mission_csv'
-
-        data = pd.read_csv(mission_file)
+        mission_data = 'data/mission.csv'
+        print("Current Working Directory:", os.getcwd())
+        data = pd.read_csv(mission_data)
 
         reference = data['reference'].to_numpy()
         cave_height = data['cave_height'].to_numpy()
@@ -115,3 +116,4 @@ class ClosedLoop:
     def simulate_with_random_disturbances(self, mission: Mission, variance: float = 0.5) -> Trajectory:
         disturbances = np.random.normal(0, variance, len(mission.reference))
         return self.simulate(mission, disturbances)
+
