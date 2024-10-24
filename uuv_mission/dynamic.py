@@ -111,7 +111,7 @@ class ClosedLoop:
             # Get the reference depth from the mission
             reference_depth = mission.reference[t]
 
-            # Calculate control action using the PD controller
+            # Calculate control action using the PID controller
             actions[t] = self.controller.compute_control(reference_depth, observation_t)
 
             # Update submarine state with the calculated control action and disturbance
